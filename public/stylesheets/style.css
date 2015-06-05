@@ -38,3 +38,15 @@ footer {
 nav span {
     margin: 0px 10px 0px 0px;
 }
+
+
+#container-img-author{
+	float:left;
+}
+#container-img-author > img{
+	height: 100px;;
+}
+
+#container-info-author {
+    text-align: left;
+}
