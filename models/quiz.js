@@ -7,10 +7,20 @@
 //##################################################################################################
 
 module.exports = function(sequelize, DataTypes) {
-
+	// http://sequelize.readthedocs.org/en/2.0/docs/models-definition/#validations
 	return sequelize.define('Quiz',{
-								pregunta:DataTypes.STRING,
-								respuesta:DataTypes.STRING 
+								pregunta:{
+									type:DataTypes.STRING,
+									validate: {
+										notEmpty:{ msg:"-> Falta pregunta" }
+									}
+								},
+								respuesta:{
+									type:DataTypes.STRING,
+									validate: {
+										notEmpty:{ msg:"-> Falta respuesta" }
+									}
+								}
 							}); // pregunta y respuesta son todos los campos de la tabla y son de tipo String
 
 };

@@ -18,6 +18,15 @@
 			<span><a href="/author">Autor</a></span>
 		</nav>
 		<section class="main" id="s1">
+			<% if(errors.length){  %>
+			<span id="ErrorMsgs">  <!-- Mensajes de errores de validación, motivo por el que hay que reinciacializar en cada petición de renderización -->
+				Corregir errores: <br/>
+				<%for (var i in errors) { %>
+					<span> <%= errors[i].message  %></span>
+				<% }  %>
+			</span>
+			<% }  %>
+			<p></p>
 			<%- body %>
 		</section>
 		<footer class="main" id="f1">
