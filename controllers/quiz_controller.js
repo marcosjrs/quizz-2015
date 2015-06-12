@@ -63,9 +63,9 @@ exports.new = function(req,res){
 	// con ese objeto renderizará quizes/new.ejs (que a su vez utilizará _form.ejs como si de un partial se tratase.)
 	// ese objeto formará parte del body (req.body), con lo que luego al hacer el create continuará en el body ese objeto
 	var quiz = models.Quiz.build(
-		{pregunta:"Pregunta", respuesta:"Respuesta"}
+		{pregunta:"Pregunta", respuesta:"Respuesta", tema:models.TEMAS[0].value}//por defecto el primero
 	);
-	res.render('quizes/new',{quiz:quiz, errors:[]});
+	res.render('quizes/new',{quiz:quiz, temas:models.TEMAS, errors:[]});
 }
 
 exports.create = function(req,res){
@@ -82,7 +82,7 @@ exports.create = function(req,res){
 			// en err.errors van los msg de error puestos en la validaciones de cada campo en models/quiz.js (errors es un array de message s  de las validaciones que no cumple, ver layout.ejs)
 			res.render("quizes/new",{quiz:quiz, errors:err.errors}); // por esto tenemos que reinicializar errors en el resto de los sitios que mandamos renderizar...
 		}else{ // no hay ningún error, por tanto solo hay que guardar y redireccionar a quizes
-			quiz.save({fields:["pregunta","respuesta"]})
+			quiz.save({fields:["pregunta","respuesta","tema"]})
 				.then(function(){
 					res.redirect('/quizes'); //redirect sobre objeto de response.
 				});
@@ -92,7 +92,7 @@ exports.create = function(req,res){
 }
 
 exports.edit = function(req, res){ // mostrará formulario para editar pregunta
-	res.render('quizes/edit',{ quiz:req.quiz , errors:[]});//eq.quiz insertada antes en req mediante el metodo de tipo "autoload" anterior, load.
+	res.render('quizes/edit',{ quiz:req.quiz, temas:models.TEMAS, errors:[]});//eq.quiz insertada antes en req mediante el metodo de tipo "autoload" anterior, load.
 }; 
 
 exports.update = function(req, res){
@@ -100,7 +100,9 @@ exports.update = function(req, res){
 	//y si es correcto lo guardamos y si no mostramos el edit con los errores.
 	req.quiz.pregunta = req.body.quiz.pregunta;
 	req.quiz.respuesta = req.body.quiz.respuesta;
-
+	req.quiz.tema = req.body.quiz.tema;
+	console.log("tema");
+	console.log(req.body.quiz );
 	req.quiz
 	.validate()
 	.then(
@@ -109,7 +111,7 @@ exports.update = function(req, res){
 			// en err.errors van los msg de error puestos en la validaciones de cada campo en models/quiz.js (errors es un array de message s  de las validaciones que no cumple, ver layout.ejs)
 			res.render("quizes/edit",{quiz:req.quiz, errors:err.errors}); // por esto tenemos que reinicializar errors en el resto de los sitios que mandamos renderizar...
 		}else{ // no hay ningún error, por tanto solo hay que guardar y redireccionar a quizes
-			req.quiz.save({fields:["pregunta","respuesta"]})
+			req.quiz.save({fields:["pregunta","respuesta","tema"]})
 				.then(function(){
 					res.redirect('/quizes'); //redirect sobre objeto de response (con url relativo)
 				});

@@ -20,6 +20,12 @@ module.exports = function(sequelize, DataTypes) {
 									validate: {
 										notEmpty:{ msg:"-> Falta respuesta" }
 									}
+								},
+								tema:{
+									type:DataTypes.STRING,
+									validate: {
+										notEmpty:{ msg:"-> Falta el tema" }
+									}
 								}
 							}); // pregunta y respuesta son todos los campos de la tabla y son de tipo String
 

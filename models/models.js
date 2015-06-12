@@ -15,8 +15,6 @@ var protocol = (url[1]||null);
 var dialect = (url[1]||null);
 var port = (url[5]||null);
 var host = (url[4]||null);
-console.log("DB_name: "+DB_name+"\n user: "+user+"\n pwd: "+pwd+"\n protocol: "+protocol+"\n dialect: "+dialect+"\n port: "+port,
-host)
 
 var storage = process.env.DATABASE_STORAGE;
 
@@ -38,6 +36,15 @@ var Quiz = sequelize.import(path.join(__dirname,'quiz'));  //Otra forma sería, 
 
 exports.Quiz = Quiz; //exportar la definición de tabla Quiz, para poder importarlos en otros sitios de la aplicación
 
+//Con tiempo esto posiblemente lo metería en otra tabla en lugar de ponerlo de esta forma aquí, pero en plan rápido va así..
+var TEMAS = [	{value:"otro",label:"Otro"},
+				{value:"humanidades",label:"Humanidades"},
+				{value:"ocio",label:"Ocio"},
+				{value:"ciencia",label:"Ciencia"},
+				{value:"tecnologia",label:"Tecnología"},
+			];
+exports.TEMAS = TEMAS;
+
 //Creamos e inicializamos la tabla de preguntas en DB, con sequelize.sync(), en caso de que no tuviera ningún registro la tabla.
 sequelize.sync()
 		.then(function(result) {
@@ -45,11 +52,13 @@ sequelize.sync()
     			if(count === 0) { 
     				Quiz.create({
 						pregunta:'Capital de Italia',
-						respuesta:'Roma'
+						respuesta:'Roma',
+						tema:"otro"
 					});
     				return Quiz.create({
 						pregunta:'Capital de Portugal',
-						respuesta:'Lisboa'
+						respuesta:'Lisboa',
+						tema:"otro"
 					}).then(function(){	console.log("Base de datos inicializada...")	});
     			}
 			})		
