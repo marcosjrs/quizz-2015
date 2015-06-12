@@ -91,4 +91,36 @@ exports.create = function(req,res){
 	
 }
 
+exports.edit = function(req, res){ // mostrará formulario para editar pregunta
+	res.render('quizes/edit',{ quiz:req.quiz , errors:[]});//eq.quiz insertada antes en req mediante el metodo de tipo "autoload" anterior, load.
+}; 
+
+exports.update = function(req, res){
+	//inyectamos quiz en el objeto request con los datos (del "autoload", metodo exports.load), luego lo validaremos 
+	//y si es correcto lo guardamos y si no mostramos el edit con los errores.
+	req.quiz.pregunta = req.body.quiz.pregunta;
+	req.quiz.respuesta = req.body.quiz.respuesta;
+
+	req.quiz
+	.validate()
+	.then(
+		function(err){
+		if(err){ //Hay un error y hay que mostrarlo en "quizes\edit" que es desde donde se esta editando este quiz... pero en lugar de ponerlo hay lo ponemos en el layout, layout.ejs 
+			// en err.errors van los msg de error puestos en la validaciones de cada campo en models/quiz.js (errors es un array de message s  de las validaciones que no cumple, ver layout.ejs)
+			res.render("quizes/edit",{quiz:req.quiz, errors:err.errors}); // por esto tenemos que reinicializar errors en el resto de los sitios que mandamos renderizar...
+		}else{ // no hay ningún error, por tanto solo hay que guardar y redireccionar a quizes
+			req.quiz.save({fields:["pregunta","respuesta"]})
+				.then(function(){
+					res.redirect('/quizes'); //redirect sobre objeto de response (con url relativo)
+				});
+		}
+	});
+};
+
+exports.destroy = function(req, res){
+	req.quiz.destroy()
+				.then(function(){ res.redirect('/quizes'); }) // redirije a quizes si va bien
+				.catch(function(error){ next(error)});
+};
+
 

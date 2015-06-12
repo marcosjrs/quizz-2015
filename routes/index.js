@@ -17,6 +17,9 @@ router.get('/quizes/:quizId(\\d+)', quizController.show);//enseñar pregunta
 router.get('/quizes/:quizId(\\d+)/answer', quizController.answer);//donde comprobará la respuesta
 router.get('/quizes/new', quizController.new); // mostrará el formulario para crear la pregunta
 router.post('/quizes/create', quizController.create); // creará la pregunta
+router.get('/quizes/:quizId(\\d+)/edit', quizController.edit); // formulario de edición de una pregunta
+router.put('/quizes/:quizId(\\d+)', quizController.update); // actualizar una pregunta (enviado desde el edit)
+router.delete('/quizes/:quizId(\\d+)', quizController.destroy); // eliminar una pregunta (enviado desde el edit)
 
 //antes:
 //router.get('/quizes/question', quizController.question);
