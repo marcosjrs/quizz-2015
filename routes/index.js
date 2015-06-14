@@ -1,5 +1,6 @@
 var express = require('express');
 var quizController = require('../controllers/quiz_controller.js');
+var commentController = require('../controllers/comment_controller.js');
 var router = express.Router();
 
 /* GET home page. */
@@ -20,6 +21,9 @@ router.post('/quizes/create', quizController.create); // creará la pregunta
 router.get('/quizes/:quizId(\\d+)/edit', quizController.edit); // formulario de edición de una pregunta
 router.put('/quizes/:quizId(\\d+)', quizController.update); // actualizar una pregunta (enviado desde el edit)
 router.delete('/quizes/:quizId(\\d+)', quizController.destroy); // eliminar una pregunta (enviado desde el edit)
+
+router.get('/quizes/:quizId(\\d+)/comments/new', commentController.new);
+router.post('/quizes/:quizId(\\d+)/comments', commentController.create);
 
 //antes:
 //router.get('/quizes/question', quizController.question);

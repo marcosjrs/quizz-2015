@@ -9,16 +9,19 @@ var models =require('../models/models.js');
 //Middleware (intermediario) que buscará en la bbdd el id del quiz (quizId), si lo encuentra lo asigna en el request (req),
 //luego se ejecutará el método que "le tocaba" (show o answer), y como llevan el objeto request con la nueva variable "quiz" ..
 exports.load = function(req, res, next, quizId){
-	models.Quiz.findById(quizId).then(
-		function(quiz){
-			if(quiz){
-				req.quiz = quiz;
-				next(); // para que continue con las siguientes peticiones...
-			}else{
-				next( new Error('No exite el quizId= '+quizId)  );
+	models.Quiz.find({
+			where:{id:Number(quizId)},
+			include:[ {model: models.Comment} ]
+		}).then(
+			function(quiz){
+				if(quiz){
+					req.quiz = quiz;
+					next(); // para que continue con las siguientes peticiones...
+				}else{
+					next( new Error('No exite el quizId= '+quizId)  );
+				}
 			}
-		}
-	).catch(function(error){ 		next(error);		});
+		).catch(function(error){ 		next(error);		});
 };
 
 exports.show = function(req, res){

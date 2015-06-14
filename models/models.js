@@ -32,9 +32,20 @@ var sequelize = new Sequelize(DB_name,user,pwd,{
 //var sequelize = new Sequelize(null,null,null, {dialect:"sqlite", storage:"quiz.sqlite"} ); //antes
 
 //Importar la definicion de la tabla quiz, de quiz.js, pero no se pone extensión.
-var Quiz = sequelize.import(path.join(__dirname,'quiz'));  //Otra forma sería, directamente:   var Quiz = sequelize.define('Quiz',{ pregunta:DataTypes.STRING, respuesta:DataTypes.STRING });
+var quiz_path = path.join(path.join(__dirname,'quiz'))
+var Quiz = sequelize.import(quiz_path); 
+
+var comment_path = path.join(path.join(__dirname,'comment'))
+var Comment = sequelize.import(comment_path); 
+
+Comment.belongsTo(Quiz);//  Un comentario en concreto (id) solo va a estar en un quiz. 
+Quiz.hasMany(Comment); // Un Quiz puede tener muchos comentarios. Relacionamos de tipo 1 a N. 
+// 1 a 1 sería con belongsTo(..) y hasOne(..)
+//1 a N sería belongsTo(...) y hasMany(...)
+// N a N sería belongsToMany(...) y hasMany(...) . Más en http://docs.sequelizejs.com/en/latest/docs/associations/
 
 exports.Quiz = Quiz; //exportar la definición de tabla Quiz, para poder importarlos en otros sitios de la aplicación
+exports.Comment = Comment; //exportar la definición de tabla Comment, para poder importarlos en otros sitios de la aplicación
 
 //Con tiempo esto posiblemente lo metería en otra tabla en lugar de ponerlo de esta forma aquí, pero en plan rápido va así..
 var TEMAS = [	{value:"otro",label:"Otro"},
@@ -45,7 +56,7 @@ var TEMAS = [	{value:"otro",label:"Otro"},
 			];
 exports.TEMAS = TEMAS;
 
-//Creamos e inicializamos la tabla de preguntas en DB, con sequelize.sync(), en caso de que no tuviera ningún registro la tabla.
+//Creamos e inicializamos la tabla exportsde preguntas en DB, con sequelize.sync(), en caso de que no tuviera ningún registro la tabla.
 sequelize.sync()
 		.then(function(result) {
 			Quiz.count().then(function (count){
@@ -58,7 +69,7 @@ sequelize.sync()
     				return Quiz.create({
 						pregunta:'Capital de Portugal',
 						respuesta:'Lisboa',
-						tema:"otro"
+						texportsema:"otro"
 					}).then(function(){	console.log("Base de datos inicializada...")	});
     			}
 			})		
