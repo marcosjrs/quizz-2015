@@ -4,6 +4,22 @@
 //#########################################################################
 
 var models =require('../models/models.js');
+//Método de patrón Autoload. Se ejecuta cuando hay en la url, pedida, un parametro correspondiente a :commentId
+//Busca el comentario con ese id, y si lo encuentra inyecta en el req (request) un objeto comment con los datos.
+exports.load = function(req,res,next,commentId){
+	models.Comment.find({
+		where:{
+			id:Number(commentId)
+		}
+	}).then(function(comment){
+		if(comment){
+			req.comment = comment;
+			next();
+		}else{
+			next(new Error("No existe un comentario con el id "+ commentId));
+		}
+	}).catch(function(error){	next(error);	});
+}
 
 //Para: GET /quizes/:quiId/comments/new
 exports.new = function(req,res){
@@ -19,7 +35,7 @@ exports.create = function(req,res){
 	);
 	//guardar en la BBDD (solo los campos "pregunta" y"respuesta") y una vez guardado redireccionar a quizes.
 	//antes validamos según las "normas" puestas en la definicion del modelo de la tabla (models/quiz.js)
-console.log(comment);
+
 	comment
 	.validate()
 	.then(
@@ -36,5 +52,12 @@ console.log(comment);
 				});
 		}
 	});
-	
+}
+
+//GET /quizes/:quizId/comments/:commentId/publish , como  lleva :commentId se ejecutará antes exports.load... según lo expuesto en routes/index.ejs
+exports.publish = function(req, res){
+	req.comment.publicado = true;
+	req.comment.save({fields:["publicado"]})
+		.then(function(){	res.redirect('/quizes/'+req.params.quizId);	})
+		.catch(function(error){	next(error);	})
 }

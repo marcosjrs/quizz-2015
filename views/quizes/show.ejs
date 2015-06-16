@@ -7,6 +7,13 @@
 <p><a href="/quizes/<%= quiz.id %>/comments/new"><button>Nuevo comentario</button></a></p>
 
 <p><strong>Comentarios:</strong></p>
+<!-- la idea es que los usuarios registrados puedan ver todos los comentarios
+ y los no registrados, solo aquellos comentarios que tengan el campo publicado con valor true. -->
 <%for (var index in quiz.Comments) { %>
-	<p><%= quiz.Comments[index].texto  %></p>
+	<% if(quiz.Comments[index].publicado || session.user){  %>
+		<p>- <%= quiz.Comments[index].texto  %>
+		<% if(!quiz.Comments[index].publicado && session.user){  %> <!-- Si no está publicado que muestre el boton para poder hacerlo si el usuario está resgistrado, of course...--> 
+			<a href="/quizes/<%= quiz.id %>/comments/<%= quiz.Comments[index].id %>/publish"><button>Publicar</button></a></p>
+		<%}  %>
+	<%}  %>
 <% }; %>

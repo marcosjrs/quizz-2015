@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 
 var partials = require('express-partials');
 var methodOverride = require('method-override');
+var session = require('express-session');
 
 var routes = require('./routes/index');
 var app = express();
@@ -22,9 +23,28 @@ app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());// Se ha quitado { extended: false } para poder pasar parametros pseudo JSON por POST...
-app.use(cookieParser());
+app.use(cookieParser('Quiz 2015'));// añadir semilla "Quiz 2015" para cifrar cookie (pequeña encriptación que realiza)
+app.use(session()); //Instalar MW session
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
+
+//Helpers dinámicos
+
+app.use(function(req,res, next){//midleware para la sesión
+    //guardar el path en session.redir siempre que no sean login o logout
+    // para cuando se haga el login o logout, recoger ese path para hacer la redirección.
+    // para saber donde estaba el cliente antes de hacer login o logout.
+    if(!req.path.match(/\/login|\/logout/)){
+        req.session.redir = req.path;
+    }
+
+    //la sesión que está accesible en req.session la copia en res.locals.session para que luego
+    //esté accesible desde todas las vistas.
+    res.locals.session = req.session; //la ponemos en locals para no tener que ponerla como parametro
+
+    //continua lo la petición original
+    next();
+});
 
 app.use('/', routes);
 

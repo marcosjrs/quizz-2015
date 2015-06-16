@@ -9,7 +9,11 @@ module.exports = function(sequelize, DataTypes){
 				validate: {
 							notEmpty:{ msg:"-> Falta el tema" }
 						}
-			}
+			},
+			publicado:{
+				type:DataTypes.BOOLEAN,
+				defaultValue:false
+			}//por defecto tendrá el valor false.
 		}
 	);
 };
