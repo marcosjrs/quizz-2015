@@ -30,7 +30,22 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //Helpers dinámicos
 
-app.use(function(req,res, next){//midleware para la sesión
+//Autologout, si en dos minutos no hizo ninguna petición, hará un logout.
+app.use(function(req,res, next){    
+    if(req.session.user){
+      var fecha = new Date(); 
+      var miliseg = fecha.getTime();
+      var milisegDif = 2*60*1000;//2 minutos.
+      if((req.session.last_access) && (req.session.last_access+milisegDif < miliseg)){
+        delete req.session.user;
+      }else{
+        req.session.last_access = miliseg;
+      }
+    }
+    next();
+  });
+
+app.use(function(req,res, next){
     //guardar el path en session.redir siempre que no sean login o logout
     // para cuando se haga el login o logout, recoger ese path para hacer la redirección.
     // para saber donde estaba el cliente antes de hacer login o logout.
